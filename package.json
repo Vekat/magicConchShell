@@ -1,31 +1,33 @@
 {
-  "name": "magicconchshell",
-  "version": "1.0.0",
-  "description": "A silly Telegram bot",
-  "main": "server.js",
-  "keywords": [
-    "telegram",
-    "bot",
-    "nodejs"
-  ],
-  "author": "Vitor Cortez",
-  "repository": {
-    "type": "git"
-  },
-  "engines": {
-    "node": ">= 4.0.0"
-  },
-  "dependencies": {
-    "body-parser": "^1.13.1",
-    "express": "^4.8.0",
-    "morgan": "^1.6.1",
-    "node-persist": "0.0.4",
-    "request-promise": "^0.4.2"
-  },
-  "devDependencies": {},
-  "bundleDependencies": [],
-  "scripts": {
-    "start": "node server.js"
-  },
-  "license": "MIT"
+	"name": "magicconchshell",
+	"version": "1.0.0",
+	"description": "A silly Telegram bot",
+	"main": "server.js",
+	"keywords": [
+		"telegram",
+		"bot",
+		"nodejs"
+	],
+	"author": {
+		"name": "Vitor Cortez",
+		"email": "vitor.a.cortez@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Vekat/magicConchShell.git"
+	},
+	"engines": {
+		"node": ">= 4.0.0"
+	},
+	"dependencies": {
+		"body-parser": "^1.13.1",
+		"express": "^4.8.0",
+		"morgan": "^1.6.1",
+		"node-persist": "0.0.4",
+		"request-promise": "^0.4.2"
+	},
+	"scripts": {
+		"start": "node server.js"
+	},
+	"license": "MIT"
 }
