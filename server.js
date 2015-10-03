@@ -1,5 +1,10 @@
 #!/bin/env node
 
+/**
+ * @file Creates a Bot object and starts the server.
+ * @author Vitor Cortez
+ */
+
 var express = require('express'),
   logger = require('morgan'),
   parser = require('body-parser');

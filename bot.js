@@ -1,15 +1,28 @@
 /**
- *  @file bot.js
+ *  @file Exports the Bot class
  *  @author vitor cortez
  */
 
 var request = require('request-promise');
 
+/**
+ * The Bot object holds methods to interact with Telegram's API.
+ * @class
+ * @requires module:request/request-promise
+ */
 class Bot {
+  /**
+   * Creates a instance of Bot.
+   * @param {string} url - The API address to which this Bot will send requests
+   */
   constructor(url) {
     this.api = url;
   }
 
+  /**
+   * Requests additional data about the Bot.
+   * @returns {Promise}
+   */
   init() {
     return request(`${this.api}/getMe`)
       .then(body => {
@@ -24,6 +37,12 @@ class Bot {
       .catch(err => console.error(err.stack));
   }
 
+  /**
+   * Sends a sound file to chat.
+   * @param {string} chat_id - Chat identifier
+   * @param {string|Audio} audio - Audio file or identifier of existing file
+   * @param {string} [reply_id] - User identifier to address reply
+   */
   sendAudio(chat_id, audio, reply_id) {
     let req = request.post(`${this.api}/sendAudio`);
     let form = req.form();
@@ -37,6 +56,12 @@ class Bot {
     return req;
   }
 
+  /**
+   * Sends a text message to chat.
+   * @param {string} chat_id - Chat identifier
+   * @param {string} text - Message to send
+   * @param {string} [reply_id] - User identifier to address reply
+   */
   sendMessage(chat_id, text, reply_id) {
     return request.post({
       'url': `${this.api}/sendMessage`,
@@ -48,6 +73,10 @@ class Bot {
     });
   }
 
+  /**
+   * Sets HTTP address to receive messages from Telegram.
+   * @param {string} server - HTTP address of the Bot
+   */
   setWebhook(server) {
     return request.post({
       'url': `${this.api}/setWebhook`,
