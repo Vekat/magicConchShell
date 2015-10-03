@@ -6,13 +6,13 @@
 var request = require('request-promise');
 
 /**
- * The Bot object holds methods to interact with Telegram's API.
+ * The Bot object interacts with the Telegram API.
  * @class
  * @requires module:request/request-promise
  */
 class Bot {
   /**
-   * Creates a instance of Bot.
+   * Creates an instance of Bot.
    * @param {string} url - The API address to which this Bot will send requests
    */
   constructor(url) {
@@ -20,7 +20,7 @@ class Bot {
   }
 
   /**
-   * Requests additional data about the Bot.
+   * Requests additional data about this Bot.
    * @returns {Promise}
    */
   init() {
@@ -74,7 +74,7 @@ class Bot {
   }
 
   /**
-   * Sets HTTP address to receive messages from Telegram.
+   * Sets an HTTP address to receive messages addressed to this Bot.
    * @param {string} server - HTTP address of the Bot
    */
   setWebhook(server) {
