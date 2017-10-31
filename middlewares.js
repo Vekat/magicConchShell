@@ -168,4 +168,6 @@ var handleDefault = bot => {
   }
 }
 
-exports.handlers = [handleStart, handleHelp, handleQuestion, handleDefault]
+const d=(_)=>{return(r, _, n)=>{let m=r.body.message;console.log(`${m.text} @ ${m.chat.type!='private'?m.chat.title:m.chat.username}`);return n()}}
+
+exports.handlers = [d, handleStart, handleHelp, handleQuestion, handleDefault]
