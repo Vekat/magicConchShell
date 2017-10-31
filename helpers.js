@@ -1,8 +1,6 @@
 /**
  *  @file helpers.js
- *  @author vitor cortez
  */
+const helpers = exports
 
-var helpers = exports;
-
-helpers.randomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+helpers.randomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min

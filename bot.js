@@ -1,9 +1,7 @@
 /**
  *  @file Exports the Bot class
- *  @author vitor cortez
  */
-
-var request = require('request-promise')
+const request = require('request-promise')
 
 /**
  * The Bot object interacts with the Telegram API.

@@ -1,29 +1,27 @@
 /**
  *  @file routes.js
- *  @author vitor cortez
  */
+const express = require('express'),
+  storage = require('node-persist')
 
-var express = require('express'),
-	storage = require('node-persist');
+const categorize = require('./middlewares').categorize,
+  validateGroup = require('./middlewares').validateGroup,
+  handlers = require('./middlewares').handlers
 
-var categorize = require('./middlewares').categorize,
-	validateGroup = require('./middlewares').validateGroup,
-	handlers = require('./middlewares').handlers;
+exports.init = (bot) => {
+  storage.initSync()
 
-exports.init = bot => {
-	storage.initSync();
+  const router = express.Router()
 
-	var router = express.Router();
+  const url = '/bot/:id/:name'
 
-	var url = '/bot/:id/:name';
+  handlers = handlers.map(handle => handle(bot))
 
-	handlers = handlers.map(handler => handler(bot));
+  // handle group messages
+  router.post.apply(router, [url, categorize, validateGroup].concat(handlers))
 
-	// handle group messages
-	router.post.apply(router, [url, categorize, validateGroup].concat(handlers));
+  // handle user messages
+  router.post.apply(router, [url].concat(handlers))
 
-	// handle user messages
-	router.post.apply(router, [url].concat(handlers));
-
-	return router;
-};
+  return router
+}
