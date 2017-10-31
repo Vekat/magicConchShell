@@ -81,7 +81,8 @@ class Bot {
     return request.post({
       'url': `${this.api}/setWebhook`,
       'form': {
-        'url': server
+        'url': server,
+        'allowed_updates': ['message', 'edited_message']
       }
     });
   }
