@@ -48,7 +48,7 @@ class Bot {
     let form = req.form()
 
     form.append('chat_id', chat_id)
-    form.append('audio', audio)
+    form.append('voice', audio)
 
     if (reply_id)
       form.append('reply_to_message_id', reply_id)
