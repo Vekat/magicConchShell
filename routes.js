@@ -5,8 +5,9 @@ const express = require('express'),
   storage = require('node-persist')
 
 const categorize = require('./middlewares').categorize,
-  validateGroup = require('./middlewares').validateGroup,
-  handlers = require('./middlewares').handlers
+  validateGroup = require('./middlewares').validateGroup
+
+let handlers = require('./middlewares').handlers
 
 exports.init = (bot) => {
   storage.initSync()
