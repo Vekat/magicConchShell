@@ -60,7 +60,8 @@ var handleStart = bot => {
       .then(body => {
         if (upload) {
           body = JSON.parse(body)
-          storage.setItemSync(answer, body.result.audio.file_id)
+          if (body.result.voice.file_id != void 0)
+            storage.setItemSync(answer, body.result.voice.file_id)
         }
         return res.status(200).send('greetings')
       }).catch(err => {
@@ -156,7 +157,8 @@ var handleDefault = bot => {
       .then(body => {
         if (upload) {
           body = JSON.parse(body)
-          storage.setItemSync(answer, body.result.audio.file_id)
+          if (body.result.voice.file_id != void 0)
+            storage.setItemSync(answer, body.result.voice.file_id)
         }
         return res.status(200).send('default')
       }).catch(err => {
