@@ -17,7 +17,7 @@ exports.categorize = (req, res, next) => {
   if (req.body.message == void 0 || req.body.message.text == void 0)
     return res.status(200).send()
 
-  else if (req.body.message.chat.title != 'private')
+  else if (req.body.message.chat.type == 'private')
     next('route')
 
   else
