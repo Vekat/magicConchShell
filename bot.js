@@ -80,7 +80,7 @@ class Bot {
       'url': `${this.api}/setWebhook`,
       'form': {
         'url': server,
-        'allowed_updates': ['message', 'edited_message']
+        'allowed_updates': ['message']
       }
     })
   }
