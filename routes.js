@@ -20,10 +20,10 @@ exports.init = bot => {
 	handlers = handlers.map(handler => handler(bot));
 
 	// handle group messages
-	router.post.apply(null, [url, categorize, validateGroup].concat(handlers));
+	router.post.apply(router, [url, categorize, validateGroup].concat(handlers));
 
 	// handle user messages
-	router.post.apply(null, [url].concat(handlers));
+	router.post.apply(router, [url].concat(handlers));
 
 	return router;
 };
