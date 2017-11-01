@@ -79,12 +79,13 @@ const handleHelp = (bot) => {
     }
 
     let message = [
-      "To question the Magic Conch Shell, do not forget to type a question mark `?` in your message.\n",
-      "If you are in a group, the Magic Conch will not see any messages by default, so you will have to type `\\ask @magicConchShellBot` in your messages.\n",
-      "However, if you give the Magic Conch `admin` rights, she will see all messages, and respond to only those mentioning her (`@magicConchShellBot`).\n",
-      "So, if you do not want the Magic Conch to see all your group messages, remove her `admin` status.\n",
-      "The answers only make sense if you send a `Yes or No` type of question.\n",
-      "Want to rate or review this bot? You can do it here:",
+      "To question the Magic Conch Shell, do not forget to type a question mark `?` in your message. The /ask command is not required in private chats.\n",
+      "Inside group chats, the Magic Conch will not see any messages by default. So, you will need to type `/ask@magicConchShellBot` in your messages.\n",
+      "However, if the Magic Conch has **admin** rights, she will see all messages and only respond to those mentioning her @magicConchShellBot.\n",
+      "If you do not want the Magic Conch to see all your group messages, remove her **admin** status.\n",
+      "To get updates about the Magic Conch, visit the official updates channel: telegram.me/magicconch\n",
+      "The answers only make sense if you send a `Yes` or `No` type of question.\n",
+      "To rate or review this bot, use the storebot link:",
       "telegram.me/storebot?start=magicconchshellbot"
     ].join('\n')
 
