@@ -14,10 +14,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Vekat/magicConchShell.git"
+		"url": "https://github.com/vekat/magic-conch-shell.git"
 	},
 	"engines": {
-		"node": ">= 4.0.0"
+		"node": ">=6.0.0"
 	},
 	"dependencies": {
 		"body-parser": "^1.13.1",
@@ -27,7 +27,7 @@
 		"request-promise": "^0.4.2"
 	},
 	"scripts": {
-		"start": "node server.js"
+		"start": "NODE_ENV=production node server.js"
 	},
 	"license": "MIT"
 }
