@@ -88,6 +88,7 @@ class Bot {
       'form': {
         'chat_id': chat_id,
         'text': text,
+        'parse_mode': 'Markdown',
         'reply_to_message_id': reply_id || null
       }
     })
