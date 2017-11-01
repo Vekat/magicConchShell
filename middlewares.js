@@ -7,27 +7,33 @@ const fs = require('fs'),
 const storage = require('node-persist')
 
 const randomInt = require('./helpers').randomInt
+const logger = require('./logger')
+
 const answers = ['no', 'yes', 'maybe', 'again', 'dont']
 
 const getAnswer = () => answers[randomInt(0, answers.length)]
 
 exports.categorize = (req, res, next) => {
-  if (req.body.message == void 0 || req.body.message.text == void 0)
-    return res.status(200).send()
-  else if (req.body.message.chat.type == 'private')
-    next('route')
-  else
-    next()
+  if (!req.body.message) {
+    return next(':message')
+  } else if (!req.body.message.text) {
+    return next(':text')
+  } else if (req.body.message.chat.type == 'private') {
+    return next('route')
+  }
+
+  next()
 }
 
 exports.validateGroup = (req, res, next) => {
   let name = `@${req.params.name.toLowerCase()}`
   let message = req.body.message.text.toLowerCase()
 
-  if (message.indexOf(name) === -1)
-    res.status(200).send()
-  else
-    next()
+  if (message.indexOf(name) === -1) {
+    return next(':mention')
+  }
+
+  next()
 }
 
 const handleStart = (bot) => {
@@ -59,11 +65,8 @@ const handleStart = (bot) => {
           if (body.result.voice.file_id != void 0)
             storage.setItemSync(answer, body.result.voice.file_id)
         }
-        return res.status(200).send('greetings')
-      }).catch(err => {
-        console.log(err.stack)
-        return res.status(200).send()
-      })
+        return next(answer)
+      }).catch(next)
   }
 }
 
@@ -87,11 +90,8 @@ const handleHelp = (bot) => {
       text = m.text
 
     bot.sendMessage(chatId, message)
-      .then(body => res.status(200).send('help'))
-      .catch(err => {
-        console.log(err.stack)
-        return res.status(200).send()
-      })
+      .then((_) => next('help'))
+      .catch(next)
   }
 }
 
@@ -124,11 +124,8 @@ const handleQuestion = (bot) => {
           if (body.result.voice.file_id != void 0)
             storage.setItemSync(answer, body.result.voice.file_id)
         }
-        return res.status(200).send(answer)
-      }).catch(err => {
-        console.log(err.stack)
-        return res.status(200).send()
-      })
+        return next(answer)
+      }).catch(next)
   }
 }
 
@@ -155,14 +152,32 @@ const handleDefault = (bot) => {
           if (body.result.voice.file_id != void 0)
             storage.setItemSync(answer, body.result.voice.file_id)
         }
-        return res.status(200).send('default')
-      }).catch(err => {
-        console.log(err.stack)
-        return res.status(200).send()
-      })
+        return next(answer)
+      }).catch(next)
   }
 }
 
-const d=(_)=>{return(r, _, n)=>{let m=r.body.message;console.log(`${m.text} @ ${m.chat.type!='private'?m.chat.title:m.chat.username}`);return n()}}
+exports.debugLogger = function(err, req, res, next) {
+  if (typeof err == 'string') {
+    const m = req.body.message
 
-exports.handlers = [d, handleStart, handleHelp, handleQuestion, handleDefault]
+    const meta = {
+      question: m.text,
+      answer: err,
+      type: m.chat.type,
+      by: m.chat.username || m.chat.first_name
+    }
+
+    if (m.chat.type != 'private') meta['title'] = m.chat.title
+
+    const msg = Object.entries(meta).map(([k, v]) => `[${k}:${v}]`).join(' ')
+
+    logger.debug(msg)
+
+    res.status(200).send(err)
+  } else {
+    next(err)
+  }
+}
+
+exports.handlers = [handleStart, handleHelp, handleQuestion, handleDefault]

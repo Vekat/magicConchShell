@@ -3,6 +3,8 @@
  */
 const request = require('request-promise')
 
+const logger = require('./logger')
+
 const caption = {
   "yes": "Yes",
   "no": "No",
@@ -41,7 +43,7 @@ class Bot {
           this.username = body.result.username
         }
       })
-      .catch(err => console.error(err.stack))
+      .catch(err => logger.error(err.stack))
   }
 
   /**

@@ -3,13 +3,15 @@
 /**
  * @file Creates a Bot object and starts the server.
  */
-
 const express = require('express'),
-  logger = require('morgan'),
+  morgan = require('morgan'),
   parser = require('body-parser')
 
+const logger = require('./logger')
+
 const Bot = require('./bot'),
-  routes = require('./routes')
+  routes = require('./routes'),
+  debugLogger = require('./middlewares').debugLogger
 
 const app = express()
 
@@ -21,7 +23,18 @@ const apiURL = `${process.env.TELEGRAM_API_URL}/bot${token}`
 
 const bot = new Bot(apiURL)
 
-app.use(logger('dev'))
+// only add debug logs in 'development' mode
+if (process.env.NODE_ENV == 'development') {
+  app.use(morgan('dev', {
+    skip: (req, res) => (res.statusCode < 400),
+    stream: process.stderr
+  }))
+
+  app.use(morgan('dev', {
+    skip: (req, res) => (res.statusCode >= 400),
+    stream: process.stdout
+  }))
+}
 
 app.get('/', (req, res) => res.status(200).send('bot is up and running'))
 
@@ -31,18 +44,20 @@ app.use(parser.json())
 app.use(routes.init(bot))
 
 // handle errors
+app.use(debugLogger)
+
 app.use((err, req, res, next) => {
-  console.error(err.stack)
+  logger.error(err.stack)
   res.status(err.status || 500).send(err.message)
 })
 
 // initialize bot and start server
 bot.init().then(() => {
   app.listen(app.get('port'), () => {
-    console.info(`listening on port ${app.get('port')}`)
+    logger.info(`listening on port ${app.get('port')}`)
 
     bot.setWebhook(`${botURL}/${bot.id}/${bot.username}`)
-      .then(() => { console.info('webhook done') })
-      .catch(err => { console.error('webhook error', err.message) })
+      .then(() => { logger.info('webhook set') })
+      .catch((err) => { logger.error(`webhook fail: ${err.message}`) })
   })
 })
