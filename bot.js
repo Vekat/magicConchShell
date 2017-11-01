@@ -3,6 +3,15 @@
  */
 const request = require('request-promise')
 
+const caption = {
+  "yes": "Yes",
+  "no": "No",
+  "again": "Try asking again",
+  "dont": "I don't think so",
+  "maybe": "Maybe someday",
+  "greetings": "Greetings"
+}
+
 /**
  * The Bot object interacts with the Telegram API.
  * @class
@@ -40,18 +49,29 @@ class Bot {
    * @param {string} chat_id - Chat identifier
    * @param {string|Audio} audio - Audio file or identifier of existing file
    * @param {string} [reply_id] - User identifier to address reply
+   * @param {string} [type] - Answer type for captioning
    */
-  sendAudio(chat_id, audio, reply_id) {
-    let req = request.post(`${this.api}/sendVoice`)
-    let form = req.form()
+  sendAudio(chat_id, audio, reply_id, type) {
+    const formType = (typeof audio == 'string') ? 'form' : 'formData'
 
-    form.append('chat_id', chat_id)
-    form.append('voice', audio)
+    let options = {
+      'url': `${this.api}/sendVoice`,
+      [formType]: {
+        'chat_id': chat_id,
+        'disable_notification': true,
+        'voice': audio
+      }
+    }
 
-    if (reply_id)
-      form.append('reply_to_message_id', reply_id)
+    if (reply_id) {
+      options[formType] = Object.assign(options[formType], {'reply_to_message_id': reply_id})
+    }
 
-    return req
+    if (type && caption[type]) {
+      options[formType] = Object.assign(options[formType], {'caption': caption[type]})
+    }
+
+    return request.post(options)
   }
 
   /**
