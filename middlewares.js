@@ -1,8 +1,6 @@
 /**
  *  @file middlewares.js
- *  @author vitor cortez
  */
-
 const fs = require('fs'),
   path = require('path')
 
@@ -16,10 +14,8 @@ const getAnswer = () => answers[randomInt(0, answers.length)]
 exports.categorize = (req, res, next) => {
   if (req.body.message == void 0 || req.body.message.text == void 0)
     return res.status(200).send()
-
   else if (req.body.message.chat.type == 'private')
     next('route')
-
   else
     next()
 }
@@ -34,17 +30,17 @@ exports.validateGroup = (req, res, next) => {
     next()
 }
 
-var handleStart = bot => {
+const handleStart = (bot) => {
   return function(req, res, next) {
-    if (req.body.message.text.indexOf('/start') === -1)
-      return next()
-
     let m = req.body.message
+
+    if (m.text.indexOf('/start') === -1) {
+      return next()
+    }
+
     let answer, audio, upload
 
-    let chatId = m.chat.id,
-      text = m.text,
-      messageId = m.message_id
+    let chatId = m.chat.id, messageId = m.message_id
 
     answer = 'greetings'
     audio = storage.getItemSync(answer)
@@ -56,7 +52,7 @@ var handleStart = bot => {
       )
     }
 
-    bot.sendAudio(chatId, audio, messageId)
+    bot.sendAudio(chatId, audio, messageId, answer)
       .then(body => {
         if (upload) {
           body = JSON.parse(body)
@@ -71,12 +67,14 @@ var handleStart = bot => {
   }
 }
 
-var handleHelp = bot => {
+const handleHelp = (bot) => {
   return function(req, res, next) {
-    if (req.body.message.text.indexOf('/help') === -1)
-      return next()
-
     let m = req.body.message
+
+    if (m.text.indexOf('/help') === -1) {
+      return next()
+    }
+
     let message = [
       "To send a question to the Magic Conch Shell, use a question mark '?' in your message.\n",
       "If you are in a group, use '@magicConchShellBot' in your messages.\n",
@@ -97,17 +95,17 @@ var handleHelp = bot => {
   }
 }
 
-var handleQuestion = bot => {
+const handleQuestion = (bot) => {
   return function(req, res, next) {
-    if (req.body.message.text.indexOf('?') === -1)
-      return next()
-
     let m = req.body.message
+
+    if (m.text.indexOf('?') === -1) {
+      return next()
+    }
+
     let answer, audio, upload
 
-    let chatId = m.chat.id,
-      text = m.text,
-      messageId = m.message_id
+    let chatId = m.chat.id, messageId = m.message_id
 
     answer = getAnswer()
     audio = storage.getItemSync(answer)
@@ -119,7 +117,7 @@ var handleQuestion = bot => {
       )
     }
 
-    bot.sendAudio(chatId, audio, messageId)
+    bot.sendAudio(chatId, audio, messageId, answer)
       .then(body => {
         if (upload) {
           body = JSON.parse(body)
@@ -134,15 +132,12 @@ var handleQuestion = bot => {
   }
 }
 
-var handleDefault = bot => {
+const handleDefault = (bot) => {
   return function(req, res) {
     let m = req.body.message
-    let answer = 'question',
-      upload
+    let answer = 'question', upload, audio
 
-    let chatId = m.chat.id,
-      text = m.text,
-      messageId = m.message_id
+    let chatId = m.chat.id, messageId = m.message_id
 
     audio = storage.getItemSync(answer)
 
