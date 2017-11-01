@@ -132,7 +132,7 @@ const handleQuestion = (bot) => {
 }
 
 const handleDefault = (bot) => {
-  return function(req, res) {
+  return function(req, res, next) {
     let m = req.body.message
     let answer = 'question', upload, audio
 
