@@ -10,8 +10,11 @@ const express = require('express'),
 const logger = require('./logger')
 
 const Bot = require('./bot'),
-  routes = require('./routes'),
-  debugLogger = require('./middlewares').debugLogger
+  routes = require('./routes')
+
+const debugLogger = require('./middlewares').debugLogger,
+  exceptionBuilder = require('./middlewares').exceptionBuilder,
+  errorHandler = require('./middlewares').errorHandler
 
 const app = express()
 
@@ -44,12 +47,9 @@ app.use(parser.json())
 app.use(routes.init(bot))
 
 // handle errors
+app.use(exceptionBuilder)
 app.use(debugLogger)
-
-app.use((err, req, res, next) => {
-  logger.error(err.stack)
-  res.status(err.status || 500).send(err.message)
-})
+app.use(errorHandler)
 
 // initialize bot and start server
 bot.init().then(() => {

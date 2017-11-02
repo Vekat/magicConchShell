@@ -160,13 +160,37 @@ const handleDefault = (bot) => {
   }
 }
 
-exports.debugLogger = function(err, req, res, next) {
-  if (typeof err == 'string') {
+exports.exceptionBuilder = function(info, req, res, next) {
+  if (typeof info == 'string' && info.indexOf(':') != -1) {
+    let err
+
+    switch (info) {
+      case ':mention':
+        err = new Error('Group message does not mention bot')
+        break
+      case ':message':
+        err = new Error('Update body does not have message')
+        break
+      case ':text':
+        err = new Error('Update message does not have text')
+        break
+      default:
+        err = new Error(info)
+    }
+
+    return next(err)
+  }
+
+  next(info)
+}
+
+exports.debugLogger = function(info, req, res, next) {
+  if (typeof info == 'string') {
     const m = req.body.message
 
     const meta = {
       question: m.text,
-      answer: err,
+      answer: info,
       type: m.chat.type,
       from: m.from.username || m.from.first_name
     }
@@ -177,10 +201,20 @@ exports.debugLogger = function(err, req, res, next) {
 
     logger.debug(msg)
 
-    res.status(200).send(err)
-  } else {
-    next(err)
+    return res.status(200).send(info)
   }
+
+  next(info)
+}
+
+exports.errorHandler = function(err, req, res, next) {
+  logger.error(err.message)
+
+  let code = err.statusCode || 500
+
+  if (err.name = 'StatusCodeError') code = 200
+
+  res.status(code).send(err.message)
 }
 
 exports.handlers = [handleStart, handleHelp, handleQuestion, handleDefault]
