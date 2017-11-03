@@ -6,34 +6,57 @@ const fs = require('fs'),
 
 const storage = require('node-persist')
 
-const randomInt = require('./helpers').randomInt
+const { randomInt } = require('./helpers')
 const logger = require('./logger')
 
 const answers = ['no', 'yes', 'maybe', 'again', 'dont']
 
 const getAnswer = () => answers[randomInt(0, answers.length)]
 
-exports.categorize = (req, res, next) => {
-  if (!req.body.message) {
-    return next(':message')
-  } else if (!req.body.message.text) {
+exports.validate = function validate(req, res, next) {
+  if (req.body && req.body.message) {
+    const msg = req.body.message
+
+    if (msg.text) {
+      res.locals.messageId = msg.message_id
+      res.locals.text = msg.text
+      res.locals.chatId = msg.chat.id
+      res.locals.chatType = msg.chat.type
+      res.locals.chatTitle = msg.chat.title
+      res.locals.botTag = `@${req.params.name.toLowerCase()}`
+
+      if (msg.from) {
+        res.locals.fromId = msg.from.id
+        res.locals.fromName = msg.from.username || msg.from.first_name
+      }
+
+      return next('route')
+    }
+
     return next(':text')
-  } else if (req.body.message.chat.type == 'private') {
-    return next('route')
   }
 
-  next()
+  next(':message')
 }
 
-exports.validateGroup = (req, res, next) => {
-  let name = `@${req.params.name.toLowerCase()}`
-  let message = req.body.message.text.toLowerCase()
+exports.isGroup = function isGroup(req, res, next) {
+  const { chatType } = res.locals
 
-  if (message.indexOf(name) === -1) {
-    return next(':mention')
+  if (chatType != 'private') {
+    return next()
   }
 
-  next()
+  next('route')
+}
+
+exports.hasMention = function hasMention(req, res, next) {
+  const { botTag, text } = res.locals
+
+  if (text.toLowerCase().includes(botTag)) {
+    return next()
+  }
+
+  next(':mention')
 }
 
 const handleStart = (bot) => {
